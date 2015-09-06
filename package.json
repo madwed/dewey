@@ -21,7 +21,8 @@
     "request-promise": "^0.4.3",
     "sanitize-html": "^1.10.0",
     "sql.js": "^0.2.21",
-    "style-stream": "^1.1.4"
+    "style-stream": "^1.1.4",
+    "url-join": "0.0.1"
   },
   "window": {
     "toolbar": false,

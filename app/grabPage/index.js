@@ -2,7 +2,7 @@ var request = require("request-promise");
 var inlineCss = require("inline-css");
 var sanitize = require("sanitize-html");
 var htmlparser = require("htmlparser2");
-var imguri = require("../imguriplus");
+var imguri = require("./imguriplus");
 
 
 var grabPage = (url) => {

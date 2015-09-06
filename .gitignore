@@ -1,6 +1,8 @@
 # Created by .ignore support plugin (hsz.mobi)
-**/.idea
+.idea
 node_modules
 logs
 coverage
 build
+catalogue
+**/decima.sqlite
