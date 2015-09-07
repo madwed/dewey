@@ -5,7 +5,8 @@ var gulp = require("gulp"),
     runSeq = require("run-sequence"),
     browserify = require("browserify"),
     source = require("vinyl-source-stream"),
-    babelify = require("babelify");
+    babelify = require("babelify"),
+    exorcist = require("exorcist");
 
 var js_path = "./app/**/*.js";
 var js_out = "decima.js";
@@ -14,6 +15,7 @@ var scss_start = "./scss/main.scss";
 var scss_path = "./scss/**/*.scss";
 var css_out = "style.css";
 var build_path = "./build";
+var map_file = "./build/decima.js.map";
 var tests = "./test/**/*.spec.js";
 
 gulp.task("lintJS", function(){
@@ -25,10 +27,14 @@ gulp.task("lintJS", function(){
 
 gulp.task("buildJS", ["lintJS"], function () {
 
-    var bundler = browserify({ debug: true });
+    var bundler = browserify({
+        debug: true,
+        ignoreMissing: true
+    });
     bundler.add(js_start);
     bundler.transform(babelify);
     bundler.bundle()
+        .pipe(exorcist(map_file))
         .pipe(source(js_out))
         .pipe(gulp.dest(build_path));
 

@@ -9,17 +9,21 @@ var writeFile = promisify(fs.writeFile);
 
 // Load the db
 var dbpath = "../decima.sqlite";
-var db = new SQL.Database(fs.readFileSync(path.join(__dirname, dbpath)));
+// var db = new SQL.Database(fs.readFileSync(path.join(__dirname, dbpath)));
+var db = openDatabase("decima", "1.0", "Dewey shelving unit", 2 * 1024 * 1024);
+db.transaction((tx) => {
+    tx.executeSql("CREATE TABLE IF NOT EXISTS LIBRARY (id PRIMARY KEY CHAR(12), title TEXT NOT NULL DEFAULT 'untitled', read BOOLEAN NOT NULL, quality BOOLEAN, author TEXT, source TEXT NOT NULL, added DATETIME DEFAULT CURRENT_TIME;");
+});
 
 var cataloguePath = "../../catalogue";
 var cardPath = "../../card.json";
 
-var saveDb = () => {
-    var data = db.export();
-    var buffer = new Buffer(data);
-    writeFile(path.join(__dirname, cardPath), "");
-    fs.writeFileSync(path.join(__dirname, dbpath), buffer);
-};
+// var saveDb = () => {
+//     var data = db.export();
+//     var buffer = new Buffer(data);
+//     writeFile(path.join(__dirname, cardPath), "");
+//     fs.writeFileSync(path.join(__dirname, dbpath), buffer);
+// };
 
 var getUniqueId = () => {
     var id = Math.random().toString(32).slice(2) + Math.random().toString(32).slice(2);
