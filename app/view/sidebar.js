@@ -1,9 +1,9 @@
 var React = require("react");
 React.render(
-    <div>
+    <div className="sidebar">
+        <button>Sync</button>
         <input type="text" placeholder="search"/>
-        <button></button>
-        <button></button>
+        <button>Unread</button>
     </div>,
     document.getElementById("content")
 );

@@ -2,7 +2,7 @@
   "name": "library-native",
   "version": "1.0.0",
   "description": "",
-  "main": "./build/decima.js",
+  "main": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -25,7 +25,7 @@
     "url-join": "0.0.1"
   },
   "window": {
-    "toolbar": false,
+    "toolbar": true,
     "width": 660,
     "height": 500
   },
