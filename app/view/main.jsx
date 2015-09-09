@@ -24,7 +24,7 @@ var Main = React.createClass({
 		});
 	},
 	read: function (id) {
-
+		var id = id;
 	},
 	render: function () {
 		return (
