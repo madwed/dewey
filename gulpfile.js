@@ -15,10 +15,7 @@ var js_start = "./app/index.js";
 var scss_start = "./scss/main.scss";
 var scss_path = "./scss/**/*.scss";
 var css_out = "style.css";
-var build_path = "./app/build";
-var map_file = "./app/build/decima.js.map";
-var react_files = "./node_modules/react/**/*.js";
-var react_path = "./node_modules/react/";
+var build_path = "./build";
 var tests = "./test/**/*.spec.js";
 
 gulp.task("lintJS", function(){
@@ -28,32 +25,25 @@ gulp.task("lintJS", function(){
          .pipe(eslint.failOnError());
 });
 
-gulp.task("fixReact", function () {
-    return gulp.src([react_files])
-        .pipe(replace(/\bdocument\b/g, "window.document"))
-        .pipe(replace("window.window.document.", "window.document."))
-        .pipe(gulp.dest(react_path));
-});
+// gulp.task("buildJS", ["lintJS"], function () {
 
-gulp.task("buildJS", ["lintJS"], function () {
+//     var bundler = browserify({
+//         debug: true,
+//         ignoreMissing: true,
+//         insertGlobals: false,
+//         detectGlobals: false,
+//         bare: true
+//     });
+//     bundler.add(js_start);
+//     bundler.transform(babelify);
+//     bundler.bundle()
+//         .pipe(exorcist(map_file))
+//         .pipe(source(js_out))
+//         .pipe(replace("require", "requireClient"))
+//         .pipe(replace("nequire", "require"))
+//         .pipe(gulp.dest(build_path));
 
-    var bundler = browserify({
-        debug: true,
-        ignoreMissing: true,
-        insertGlobals: false,
-        detectGlobals: false,
-        bare: true
-    });
-    bundler.add(js_start);
-    bundler.transform(babelify);
-    bundler.bundle()
-        .pipe(exorcist(map_file))
-        .pipe(source(js_out))
-        .pipe(replace("require", "requireClient"))
-        .pipe(replace("nequire", "require"))
-        .pipe(gulp.dest(build_path));
-
-});
+// });
 
 gulp.task("buildCSS", function () {
     return gulp.src(scss_start)
@@ -94,13 +84,8 @@ gulp.task("buildCSS", function () {
 //});
 
 gulp.task("default", function(){
-    gulp.start(["buildJS", "buildCSS"]);
+    gulp.start(["lintJS", "buildCSS"]);
     gulp.watch([js_start, js_path], ["lintJS"]);
-    gulp.watch([js_start, js_path], function(){
-        runSeq("buildJS");
-    });
-    gulp.watch(scss_path, function(){
-        runSeq("buildCSS");
-    });
+    gulp.watch(scss_path, ["buildCSS"]);
 });
 

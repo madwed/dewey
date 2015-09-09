@@ -13,8 +13,7 @@ var filter = (query) => {
         delete query.search;
     }
     return new Promise((resolve, reject) => {
-        db.find({}).exec((err, docs) => {
-            console.log(docs, err);
+        db.find(query).exec((err, docs) => {
             if (err) reject(err);
             resolve(docs);
         });

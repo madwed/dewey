@@ -1,13 +1,16 @@
 .sidebar{
-  width: 10vw;
-  height: 100vh;
-  background-color: darkred;
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 10vw;
+	height: 100vh;
+	background-color: darkred;
 
-  button{
-    width: 100%;
-  }
-  input{
-    width: 100%;
-  }
+	button{
+		width: 100%;
+	}
+	input{
+		width: 100%;
+	}
 }
 

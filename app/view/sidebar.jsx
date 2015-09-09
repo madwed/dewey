@@ -2,11 +2,17 @@ var React = require("react");
 
 var Sidebar = React.createClass({
 	render: function () {
+		var findAll = () => {
+			this.props.refine({});
+		};
+		var findUnread = () => {
+			this.props.refine({read: false});
+		};
 		return (
 			<div className="sidebar">
-				<button>Sync</button>
+				<button onClick={findAll}>Sync</button>
 				<input type="text" placeholder="search"/>
-				<button>Unread</button>
+				<button onClick={findUnread}>Unread</button>
 			</div>
 		);
 	}

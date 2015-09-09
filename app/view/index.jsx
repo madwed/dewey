@@ -7,7 +7,7 @@ require("node-jsx").install({
 	harmony: true
 });
 
-var Main = require("./main.jsx");
+var Main = require("./app/view/main.jsx");
 
 React.render(
 	<Main></Main>,
