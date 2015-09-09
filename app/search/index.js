@@ -1,11 +1,7 @@
-var Datastore = require("nedb");
-require("../indexer")();
-var paths = require("../../paths");
-
+// require("../indexer")();
+var db = require("../db");
 
 var filter = (query) => {
-    var db = new Datastore({filename: paths.db, autoload: true});
-    db.remove({}, {multi: true});
     //Read / Unread and quality should work as is from the query
     if(query.author) query.author = {$regex: new RegExp(query.author)};
     if(query.title) query.title = {$regex: new RegExp(query.title)};

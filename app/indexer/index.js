@@ -1,18 +1,9 @@
 var grabPage = require("../grabPage");
-var Datastore = require("nedb");
+var db = require("../db");
 var fs = require("fs");
 var path = require("path");
 var paths = require("../../paths");
 var promisify = require("es6-promisify");
-
-
-
-// Load the db
-// var db = new SQL.Database(fs.readFileSync(path.join(__dirname, paths.db)));
-
-// db.transaction((tx) => {
-//     tx.executeSql("CREATE TABLE IF NOT EXISTS LIBRARY (id PRIMARY KEY CHAR(12), title TEXT NOT NULL DEFAULT 'untitled', read BOOLEAN NOT NULL, quality BOOLEAN, author TEXT, source TEXT NOT NULL, added DATETIME DEFAULT CURRENT_TIME;");
-// });
 
 
 // var saveDb = () => {
@@ -22,7 +13,6 @@ var promisify = require("es6-promisify");
 //     fs.writeFileSync(paths.db, buffer);
 // };
 var addToDB = function (){
-    var db = new Datastore({filename: paths.db, autoload: true});
     var readFile = promisify(fs.readFile);
     var writeFile = promisify(fs.writeFile);
     readFile(paths.card).then((data) => {
@@ -36,11 +26,9 @@ var addToDB = function (){
                 return entry;
             });
         });
-        console.log("reading")
         return Promise.all(entries);
     }).then((entries) => {
         return Promise.all(entries.map((entry) => {
-            console.log(entry.title);
             return new Promise((resolve, reject) => {
                 db.insert({
                     title: entry.title || "undefined",

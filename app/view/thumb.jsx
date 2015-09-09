@@ -13,19 +13,4 @@ var Thumb = React.createClass({
     }
 });
 
-var ThumbList = React.createClass({
-    render: function () {
-        var thumbs = this.props.pages.map((page) => {
-            return (
-                <Thumb page={page}></Thumb>
-            );
-        });
-        return (
-            <div className="content">
-                {thumbs}
-            </div>
-        );
-    }
-});
-
-module.exports = ThumbList;
+module.exports = Thumb;

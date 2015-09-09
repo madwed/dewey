@@ -7,15 +7,9 @@ require("node-jsx").install({
 	harmony: true
 });
 
-var Sidebar = require(__dirname + "/app/view/sidebar.jsx");
-var Reader = require(__dirname + "/app/view/reader.jsx");
-var Shelf = require(__dirname + "/app/view/content.jsx");
+var Main = require("./main.jsx");
 
 React.render(
-	<div>
-		<Sidebar></Sidebar>
-		<Reader></Reader>
-		<Shelf></Shelf>
-	</div>,
+	<Main></Main>,
 	document.getElementById("content")
 );
