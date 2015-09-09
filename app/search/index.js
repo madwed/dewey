@@ -1,9 +1,11 @@
 var Datastore = require("nedb");
-var path = require("path");
-var dbpath = path.join(__dirname, "../decima.db");
+require("../indexer")();
+var paths = require("../../paths");
+
 
 var filter = (query) => {
-    var db = new Datastore({filename: dbpath, autoload: true});
+    var db = new Datastore({filename: paths.db, autoload: true});
+    db.remove({}, {multi: true});
     //Read / Unread and quality should work as is from the query
     if(query.author) query.author = {$regex: new RegExp(query.author)};
     if(query.title) query.title = {$regex: new RegExp(query.title)};
@@ -14,7 +16,13 @@ var filter = (query) => {
         }]
         delete query.search;
     }
-    return db.find(query).exec();
+    return new Promise((resolve, reject) => {
+        db.find({}).exec((err, docs) => {
+            console.log(docs, err);
+            if (err) reject(err);
+            resolve(docs);
+        });
+    });
 };
 
 module.exports = filter;

@@ -1,80 +1,86 @@
 var grabPage = require("../grabPage");
-var SQL = require("sql.js");
+var Datastore = require("nedb");
 var fs = require("fs");
 var path = require("path");
+var paths = require("../../paths");
 var promisify = require("es6-promisify");
 
-var readFile = promisify(fs.readFile);
-var writeFile = promisify(fs.writeFile);
+
 
 // Load the db
-var dbpath = "../decima.sqlite";
-// var db = new SQL.Database(fs.readFileSync(path.join(__dirname, dbpath)));
-var db = openDatabase("decima", "1.0", "Dewey shelving unit", 2 * 1024 * 1024);
-db.transaction((tx) => {
-    tx.executeSql("CREATE TABLE IF NOT EXISTS LIBRARY (id PRIMARY KEY CHAR(12), title TEXT NOT NULL DEFAULT 'untitled', read BOOLEAN NOT NULL, quality BOOLEAN, author TEXT, source TEXT NOT NULL, added DATETIME DEFAULT CURRENT_TIME;");
-});
+// var db = new SQL.Database(fs.readFileSync(path.join(__dirname, paths.db)));
 
-var cataloguePath = "../../catalogue";
-var cardPath = "../../card.json";
+// db.transaction((tx) => {
+//     tx.executeSql("CREATE TABLE IF NOT EXISTS LIBRARY (id PRIMARY KEY CHAR(12), title TEXT NOT NULL DEFAULT 'untitled', read BOOLEAN NOT NULL, quality BOOLEAN, author TEXT, source TEXT NOT NULL, added DATETIME DEFAULT CURRENT_TIME;");
+// });
+
 
 // var saveDb = () => {
 //     var data = db.export();
 //     var buffer = new Buffer(data);
-//     writeFile(path.join(__dirname, cardPath), "");
-//     fs.writeFileSync(path.join(__dirname, dbpath), buffer);
+//     writeFile(paths.card, "");
+//     fs.writeFileSync(paths.db, buffer);
 // };
+var addToDB = function (){
+    var db = new Datastore({filename: paths.db, autoload: true});
+    var readFile = promisify(fs.readFile);
+    var writeFile = promisify(fs.writeFile);
+    readFile(paths.card).then((data) => {
+        var entries = JSON.parse("[" + data.toString().slice(0, -1) + "]");
+        entries = entries.map((entry) => {
+            return grabPage(entry.source).then((html) => {
+                entry.html = html;
+                return entry;
+            }).catch((err) => {
+                entry.html = err;
+                return entry;
+            });
+        });
+        console.log("reading")
+        return Promise.all(entries);
+    }).then((entries) => {
+        return Promise.all(entries.map((entry) => {
+            console.log(entry.title);
+            return new Promise((resolve, reject) => {
+                db.insert({
+                    title: entry.title || "undefined",
+                    read: entry.read || false,
+                    quality: entry.quality || false,
+                    author: entry.author || undefined,
+                    source: entry.source || undefined,
+                    added: new Date()
+                }, (err, newDoc) => {
+                    if (err) reject(err);
+                    resolve(newDoc);
+                });
+            }).then((doc) => {
+                doc.html = entry.html;
+                return doc;
+            }).catch((err) => {
+                console.log("ERROR WHILE PUTTING BOOKS ON THE SHELF", err);
+            });
+            //Put the page on the shelf (store it in the catalogue)  
+        }));
+    }).then((entries) => {
+        return Promise.all(entries.map((entry) => {
+            console.log(entry);
+            var shelf = path.join(paths.catalogue, entry._id + ".html");
+            return writeFile(shelf, entry.html)
+                .then(() => {
+                    console.log("Saved " + entry._id);
+                }).catch(() => {
+                    console.log("Error saving " + entry._id);
+                });
+        }));
+    }).then(() => {
+        console.log("Successfully shelved!");
+    }).catch((err) => {
+        console.log(err);
+    });
 
-var getUniqueId = () => {
-    var id = Math.random().toString(32).slice(2) + Math.random().toString(32).slice(2);
-    var statement = db.prepare("SELECT * FROM LIBRARY WHERE id=$id");
-    statement.bind({$id: id});
-    statement.step();
-    return statement.get().length === 0 ? id : getUniqueId();
 };
 
-readFile(path.join(__dirname, "../../card.json")).then((data) => {
-    var entries = JSON.parse("[" + data.toString() + "]");
-    entries = entries.map((entry) => {
-        return grabPage(entry.source).then((html) => {
-            entry.html = html;
-            return entry;
-        }).catch((err) => {
-            entry.html = err;
-            return entry;
-        });
-    });
-    return Promise.all(entries);
-}).then((entries) => {
-    return Promise.all(entries.map((entry) => {
-        var statement;
-        var id = getUniqueId();
-        statement = db.prepare("INSERT INTO LIBRARY (id, title, read, quality, author, source) VALUES ($id, $title, $read, $quality, $author, $source)");
-        statement.bind({
-            $id: id,
-            $title: entry.title || "undefined",
-            $read: entry.read ? 1 : 0,
-            $quality: entry.quality ? 1 : 0,
-            $author: entry.author || null,
-            $source: entry.source
-        });
-        statement.step();
-        //Put the page on the shelf (store it in the catalogue)
-        var shelf = path.join(__dirname, cataloguePath, id + ".html");
-        return writeFile(shelf , entry.html)
-            .then(() => {
-                console.log("Saved " + id);
-            }).catch(() => {
-                console.log("Error saving " + id);
-            });
-    }));
-}).then(() => {
-    saveDb();
-}).catch((err) => {
-    console.log(err);
-});
-
-
+module.exports = addToDB;
 
 
 

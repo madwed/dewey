@@ -6,6 +6,7 @@ var gulp = require("gulp"),
     browserify = require("browserify"),
     source = require("vinyl-source-stream"),
     babelify = require("babelify"),
+    replace = require("gulp-replace"),
     exorcist = require("exorcist");
 
 var js_path = "./app/**/*.js";
@@ -14,8 +15,10 @@ var js_start = "./app/index.js";
 var scss_start = "./scss/main.scss";
 var scss_path = "./scss/**/*.scss";
 var css_out = "style.css";
-var build_path = "./build";
-var map_file = "./build/decima.js.map";
+var build_path = "./app/build";
+var map_file = "./app/build/decima.js.map";
+var react_files = "./node_modules/react/**/*.js";
+var react_path = "./node_modules/react/";
 var tests = "./test/**/*.spec.js";
 
 gulp.task("lintJS", function(){
@@ -25,17 +28,29 @@ gulp.task("lintJS", function(){
          .pipe(eslint.failOnError());
 });
 
+gulp.task("fixReact", function () {
+    return gulp.src([react_files])
+        .pipe(replace(/\bdocument\b/g, "window.document"))
+        .pipe(replace("window.window.document.", "window.document."))
+        .pipe(gulp.dest(react_path));
+});
+
 gulp.task("buildJS", ["lintJS"], function () {
 
     var bundler = browserify({
         debug: true,
-        ignoreMissing: true
+        ignoreMissing: true,
+        insertGlobals: false,
+        detectGlobals: false,
+        bare: true
     });
     bundler.add(js_start);
     bundler.transform(babelify);
     bundler.bundle()
         .pipe(exorcist(map_file))
         .pipe(source(js_out))
+        .pipe(replace("require", "requireClient"))
+        .pipe(replace("nequire", "require"))
         .pipe(gulp.dest(build_path));
 
 });
