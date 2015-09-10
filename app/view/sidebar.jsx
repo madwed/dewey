@@ -10,6 +10,7 @@ var Sidebar = React.createClass({
 		};
 		return (
 			<div className="sidebar">
+				<p>Dewey</p>
 				<button onClick={findAll}>Sync</button>
 				<input type="text" placeholder="search"/>
 				<button onClick={findUnread}>Unread</button>

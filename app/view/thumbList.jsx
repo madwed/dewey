@@ -1,18 +1,14 @@
 var React = require("react");
 var Thumb = require("./thumb.jsx");
 
-
-
 var ThumbList = React.createClass({
     render: function () {
+        var {pages, ...other} = this.props;
         return (
             <div className="content">
-                {this.props.pages.map((page) => {
+                {pages.map((page) => {
                     return (
-                        <div>
-                        <Thumb page={page}></Thumb>
-                        <div></div>
-                        </div>
+                        <Thumb key={page._id} page={page} {...other}></Thumb>
                     );
                 })}
             </div>
