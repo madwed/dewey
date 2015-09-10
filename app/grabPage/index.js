@@ -75,6 +75,20 @@ var mergeImages = (data) => {
     return html;
 };
 
+var setBodyStyle = (html) => {
+    var appStyle = {
+        "width": "90vw",
+        "overflow-x": "hidden",
+        "min-width": "90vw",
+        "max-width": "90vw"
+    };
+    var text = /<body.*style="(.*)"/.exec(html);
+    var style = text[1].split(";");
+    style = style.map((property) => {
+        //set styles if they're there
+    });
+
+};
 
 var grabPage = (url) => {
     var domain = findDomain(url);
