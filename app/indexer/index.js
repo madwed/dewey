@@ -6,6 +6,8 @@ var paths = require("../../paths");
 var promisify = require("es6-promisify");
 
 
+var readFile = promisify(fs.readFile);
+var writeFile = promisify(fs.writeFile);
 // var saveDb = () => {
 //     var data = db.export();
 //     var buffer = new Buffer(data);
@@ -13,8 +15,7 @@ var promisify = require("es6-promisify");
 //     fs.writeFileSync(paths.db, buffer);
 // };
 var addToDB = () => {
-    var readFile = promisify(fs.readFile);
-    var writeFile = promisify(fs.writeFile);
+    db.remove({}, {multi: true});
     readFile(paths.card).then((data) => {
         var entries = JSON.parse("[" + data.toString().slice(0, -1) + "]");
         entries = entries.map((entry) => {
@@ -51,7 +52,6 @@ var addToDB = () => {
         }));
     }).then((entries) => {
         return Promise.all(entries.map((entry) => {
-            console.log(entry);
             var shelf = path.join(paths.catalogue, entry._id + ".html");
             return writeFile(shelf, entry.html)
                 .then(() => {
@@ -67,6 +67,8 @@ var addToDB = () => {
     });
 
 };
+
+addToDB();
 
 module.exports = addToDB;
 

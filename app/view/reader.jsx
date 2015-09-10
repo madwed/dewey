@@ -1,11 +1,9 @@
 var React = require("react");
-var paths = require("../../paths");
-
 
 var Reader = React.createClass({
-    render: () => {
+    render: function () {
         return (
-            <iframe className="content reader" src={paths.catalogue + "/Uxg8skcYSVl5fyF7.html"}></iframe>
+            <iframe className="content reader" src={this.props.doc}></iframe>
         );
     }
 });

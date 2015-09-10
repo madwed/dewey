@@ -1,4 +1,6 @@
 var React = require("react");
+var paths = require("../../paths");
+var path = require("path");
 
 var Sidebar = require(__dirname + "/sidebar.jsx");
 var Reader = require(__dirname + "/reader.jsx");
@@ -9,7 +11,7 @@ var search = require("../search");
 
 var Main = React.createClass({
 	getInitialState: function () {
-		return {pages: []};
+		return {pages: [], doc: ""};
 	},
 	componentDidMount: function () {
 		search({read: false}).then((docs) => {
@@ -20,18 +22,20 @@ var Main = React.createClass({
 	},
 	refineOptions: function (query) {
 		search(query).then((docs) => {
-			this.setState({pages: docs});
+			this.setState({pages: docs, doc: ""});
 		});
 	},
 	read: function (id) {
-		var id = id;
+		id = path.join(paths.catalogue, id + ".html")
+		this.setState({doc: id})
 	},
 	render: function () {
 		return (
 			<div>
 				<Sidebar refine={this.refineOptions}></Sidebar>
-				<Reader></Reader>
-				<ThumbList pages={this.state.pages} open={this.read}></ThumbList>
+				{this.state.doc ? 
+					<Reader doc={this.state.doc}></Reader> 
+					: <ThumbList pages={this.state.pages} open={this.read}></ThumbList>}
 			</div>
 		);
 	}

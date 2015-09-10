@@ -3,6 +3,7 @@ var inlineCss = require("inline-css");
 var sanitize = require("sanitize-html");
 var htmlparser = require("htmlparser2");
 var imguri = require("./imguriplus");
+var fs = require("fs");
 
 
 var findDomain = (path) => {
@@ -25,6 +26,7 @@ var extractScripts = (html) => {
     return sanitize(html, {
         allowedTags: false,
         allowedAttributes: false,
+        allowedSchemes: false,
         exclusiveFilter: (frame) => {
             switch (frame.tag) {
                 case "script":
@@ -32,16 +34,36 @@ var extractScripts = (html) => {
                 case "img":
                     return httpReg.test(frame.attribs.src);
             }
+        },
+        transformTags: {
+            "*": (tagName, attribs) => {
+                if(attribs.onclick){
+                    delete attribs.onclick;
+                }else if(attribs.onClick){
+                    delete attribs.onClick;
+                }
+                return {
+                    tagName: tagName,
+                    attribs: attribs
+                };
+            }
         }
     });
 };
 
 var grabImages = (html, domain) => {
-    var srcs = [];
+    var srcs = [], urlProp, urlReg = /url\((.*?)\)/;
     var parser = new htmlparser.Parser({
         onopentag: (name, attribs) => {
             if (name === "img" && attribs.src) {
                 srcs.push(attribs.src);
+            } else if (name === "input" && attribs.src) {
+                srcs.push(attribs.src);
+            }
+        },
+        onattribute: (name, value) => {
+            if (name === "style" && (urlProp = urlReg.exec(value))){
+                srcs.push(urlProp[1]);
             }
         }
     });
@@ -66,14 +88,23 @@ var mergeImages = (data) => {
     for (path in srcs) {
         img = srcs[path];
         if (img.err) {
-            html = html.replace(img.base, "#");
-            console.log(img.err);
+            html = html.replace(new RegExp(img.base, "g"), "#");
         } else {
-            html = html.replace(img.base, img.data);
+            html = html.replace(new RegExp(img.base, "g"), img.data);
         }
     }
     return html;
 };
+
+var checkCharType = (html) => {
+    var tag = /<meta (?:charset|http-equiv)/;
+    if(!tag.test(html)){
+        var charTag = '<meta charset="UTF-8">'
+        var headClose = html.indexOf("</head>");
+        return html.slice(0, headClose) + charTag + html.slice(headClose);
+    }
+    return html;
+}
 
 var setBodyStyle = (html) => {
     var appStyle = {
@@ -130,8 +161,9 @@ var grabPage = (url) => {
             return grabImages(html, domain);
         }).then((data) => {
             //Apply the base64s
-            var html = mergeImages(data);
-            return setBodyStyle(html);
+            data[0] = checkCharType(data[0]);
+            data[0] = setBodyStyle(data[0]);
+            return mergeImages(data);
         }).catch((err) => {
             throw Error(err);
         });
