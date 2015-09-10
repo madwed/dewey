@@ -1,0 +1,14 @@
+
+.reader{
+	overflow-y: scroll;
+	overflow-x: hidden;
+	border: 0px;
+	html{
+		width: 90vw;
+		min-width: 90vw;
+		body{
+			width: 90vw;
+			min-width: 90vw;
+		}
+	}
+}
