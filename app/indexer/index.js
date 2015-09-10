@@ -12,7 +12,7 @@ var promisify = require("es6-promisify");
 //     writeFile(paths.card, "");
 //     fs.writeFileSync(paths.db, buffer);
 // };
-var addToDB = function (){
+var addToDB = () => {
     var readFile = promisify(fs.readFile);
     var writeFile = promisify(fs.writeFile);
     readFile(paths.card).then((data) => {

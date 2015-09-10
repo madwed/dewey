@@ -77,18 +77,45 @@ var mergeImages = (data) => {
 
 var setBodyStyle = (html) => {
     var appStyle = {
-        "width": "90vw",
+        "width": "100%",
         "overflow-x": "hidden",
-        "min-width": "90vw",
-        "max-width": "90vw"
+        "min-width": "100%",
+        "max-width": "100%",
+        "margin": "0"
     };
-    var text = /<body.*style="(.*)"/.exec(html);
-    var style = text[1].split(";");
-    style = style.map((property) => {
-        //set styles if they're there
-    });
-
+    var bodyReg = /<body.*?>/;
+    var body = bodyReg.exec(html);
+    var styleReg = /style="(.*?)"/;
+    var style = styleReg.exec(body[0]);
+    // console.log(body, style);    
+    var matchLength = body[0].length;
+    var styleProps = [];
+    if(style){
+        styleProps = style[1].split(";");
+        styleProps = styleProps.map((property) => {
+            //set styles if they're there
+            property = property.split(":");
+            property[0] = property[0].trim();
+            property[1] = property[1].trim();
+            if(appStyle[property[0]]){
+                property[1] = appStyle[property[0]];
+                delete appStyle[property[0]];
+            }
+            return property.join(":");
+        });
+    }
+    styleProps = styleProps.concat(Object.keys(appStyle)
+        .map((key) => `${key}:${appStyle[key]}`)).join(";");
+    var bodyTag;
+    var styleTag = `style="${styleProps}"`;
+    if(style){
+        bodyTag = body[0].replace(styleReg, styleTag);
+    }else{
+        bodyTag = body[0].slice(0, -1) + " " + styleTag + ">"
+    }
+    return html.slice(0, body.index) + bodyTag + html.slice(body.index + matchLength);
 };
+
 
 var grabPage = (url) => {
     var domain = findDomain(url);
@@ -103,7 +130,8 @@ var grabPage = (url) => {
             return grabImages(html, domain);
         }).then((data) => {
             //Apply the base64s
-            return mergeImages(data);
+            var html = mergeImages(data);
+            return setBodyStyle(html);
         }).catch((err) => {
             throw Error(err);
         });
