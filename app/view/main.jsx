@@ -32,10 +32,10 @@ var Main = React.createClass({
 	render: function () {
 		return (
 			<div>
-				<Sidebar refine={this.refineOptions}></Sidebar>
 				{this.state.doc ? 
 					<Reader doc={this.state.doc}></Reader> 
 					: <ThumbList pages={this.state.pages} open={this.read}></ThumbList>}
+				<Sidebar refine={this.refineOptions}></Sidebar>
 			</div>
 		);
 	}

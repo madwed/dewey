@@ -14,9 +14,11 @@ var Thumb = React.createClass({
         return (
             <div className={classes} onClick={open}>
                 <p className="thumb title">{this.props.page.title}</p>
+                <p className="thumb">{this.props.page.author}</p>
                 <p className="thumb read">{this.props.page.read ? "Read" : "Unread"}</p>
                 <p className="thumb quality">{this.props.page.quality ? "Great" : "Eh"}</p>
                 <a className="thumb source" href={this.props.page.source}>From</a>
+                <p className="thumb">{this.props.page.added.toLocaleString("en-US", {timeZone: "America/New_York"})}</p>
             </div>
         );
     }

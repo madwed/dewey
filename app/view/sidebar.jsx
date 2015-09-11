@@ -11,6 +11,7 @@ var Sidebar = React.createClass({
 		};
 		return (
 			<div className="sidebar">
+				<div className="sidebar-bg"></div>
 				<Logo/>
 				<button onClick={findAll}>Sync</button>
 				<input type="text" placeholder="search"/>

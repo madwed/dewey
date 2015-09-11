@@ -1,17 +1,18 @@
-$even: #dddddd;
-$odd: #fdfdfd;
+@import "colors";
 
 .thumbBox{
-	border-bottom: 1px solid #fff;
+	margin-bottom: 1px;
 	height: calc(1em + 7px);
+	font-family: "Oxygen";
 }
 
-.thumbTitle{
-	font-style: italic;
+.thumbBox.thumbTitle{
+	font-family: "Ubuntu";
+	font-weight: 500;
 }
 
 .thumb{
-	width: 10vw;
+	width: 14vw;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	overflow: hidden;
@@ -39,11 +40,11 @@ $odd: #fdfdfd;
 }
 
 .even{
-	background-color: $even;
-	color: invert($even);
+	background-color: $light-blue;
+	color: $dark-gray;
 }
 
 .odd{
-	background-color: $odd;
-	color: invert($odd);
+	background-color: $mid-blue;
+	color: $dark-gray;
 }
