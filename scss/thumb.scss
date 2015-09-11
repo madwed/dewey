@@ -1,6 +1,49 @@
+$even: #dddddd;
+$odd: #fdfdfd;
+
+.thumbBox{
+	border-bottom: 1px solid #fff;
+	height: calc(1em + 7px);
+}
+
+.thumbTitle{
+	font-style: italic;
+}
+
 .thumb{
-	h3, p, a{
-		display: inline-block;
-		margin: 3px;
-	}
+	width: 10vw;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	font-size: 1em;
+	display: inline-block;
+	padding: 3px;
+	border-right: 1px solid #fff;
+	margin: 0px;
+}
+
+.thumb-title{
+	width: 15vw;
+}
+
+.thumb-read{
+	width: 15vw;
+}
+
+.thumb-quality{
+	width: 15vw;
+}
+
+.thumb-source{
+	width: 15vw;
+}
+
+.even{
+	background-color: $even;
+	color: invert($even);
+}
+
+.odd{
+	background-color: $odd;
+	color: invert($odd);
 }

@@ -1,6 +1,10 @@
-@import "sidebar";
-@import "content";
+@import "fonts";
 
 body{
   margin: 0;
+  font-family: "Muli";
 }
+
+@import "logo";
+@import "sidebar";
+@import "content";

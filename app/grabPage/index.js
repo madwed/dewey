@@ -3,7 +3,6 @@ var inlineCss = require("inline-css");
 var sanitize = require("sanitize-html");
 var htmlparser = require("htmlparser2");
 var imguri = require("./imguriplus");
-var fs = require("fs");
 
 
 var findDomain = (path) => {
@@ -39,7 +38,7 @@ var extractScripts = (html) => {
             "*": (tagName, attribs) => {
                 if(attribs.onclick){
                     delete attribs.onclick;
-                }else if(attribs.onClick){
+                }else if(attribs.onClick){  
                     delete attribs.onClick;
                 }
                 return {

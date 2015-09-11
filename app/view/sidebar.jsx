@@ -1,4 +1,5 @@
 var React = require("react");
+var Logo = require("./logo.jsx");
 
 var Sidebar = React.createClass({
 	render: function () {
@@ -10,7 +11,7 @@ var Sidebar = React.createClass({
 		};
 		return (
 			<div className="sidebar">
-				<p>Dewey</p>
+				<Logo/>
 				<button onClick={findAll}>Sync</button>
 				<input type="text" placeholder="search"/>
 				<button onClick={findUnread}>Unread</button>

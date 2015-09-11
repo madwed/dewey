@@ -15,7 +15,6 @@ var filter = (query) => {
     return new Promise((resolve, reject) => {
         db.find(query).exec((err, docs) => {
             if (err) reject(err);
-            console.log(docs);
             resolve(docs);
         });
     });
